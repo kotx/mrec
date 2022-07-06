@@ -1,8 +1,17 @@
 from typing import Literal
 import json
+import os
 from fastapi import FastAPI, Depends, Query
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def mooded_movies():
     with open("mooded_movies.json") as file:
@@ -17,8 +26,8 @@ async def mood(
     asc: bool = Query(title="Whether to sort by ascending or descending", default=True),
     adult: bool = Query(title="Whether to show adult movies", default=False)):
 
-    source = [m for m in movies[mood] if adult or m["adult"] == "False"]
-    query = source[:min(limit, len(source)) if limit != 0 else -1]
+    query = [m for m in movies[mood] if adult or m["adult"] == "False"]
+    if sort != "none":
+        query = sorted(query, key=lambda m: float(m[sort]), reverse=not asc)
 
-    if sort != "none": return sorted(query, key=lambda m: float(m[sort]), reverse=not asc)
-    return query
+    return query[:min(limit, len(query)) if limit > 0 else -1]
