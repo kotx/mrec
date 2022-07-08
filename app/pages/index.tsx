@@ -4,15 +4,41 @@ import { useState } from 'react'
 
 const Home: NextPage = () => {
   const moods = [
-    'funny', 'romantic', 'mind-blowing', 'feel-good', 'thrilling', 'thought-provoking', 'weird', 'uplifting', 'challenging', 'dark', 'dramatic', 'easy', 'emotional', 'heart-warming', 'inspiring', 'instructive-2', 'intense', 'no-plot', 'slow', 'smart'
+    'funny',
+    'romantic',
+    'mind-blowing',
+    'feel-good',
+    'thrilling',
+    'thought-provoking',
+    'weird',
+    'uplifting',
+    'challenging',
+    'dark',
+    'dramatic',
+    'easy',
+    'emotional',
+    'heart-warming',
+    'inspiring',
+    // 'instructive-2',
+    'intense',
+    // 'no-plot',
+    'slow',
+    'smart'
   ]
-  const sorts = ['score', 'popularity', 'vote_average']
+  const sorts = ['score',
+    'popularity',
+    'vote_average']
 
-  const [mood, setMood] = useState(moods[0])
-  const [sort, setSort] = useState(sorts)
-  const [order, setOrder] = useState('desc')
-  const [submitting, setSubmitting] = useState(false)
-  const [results, setResults] = useState([null])
+  const [mood,
+    setMood] = useState(moods[0])
+  const [sort,
+    setSort] = useState(sorts)
+  const [order,
+    setOrder] = useState('desc')
+  const [submitting,
+    setSubmitting] = useState(false)
+  const [results,
+    setResults] = useState([null])
 
   const fetchMovies = async () => {
     const config = await (await fetch(`/api/tmdb/configuration`)).json()
@@ -45,7 +71,8 @@ const Home: NextPage = () => {
           <br /><br />
           <label htmlFor="mood">Mood: </label>
           <select id="mood" required value={mood} onChange={e => setMood(e.target.value)}>
-            {moods.map((v, k) =>
+            {moods.map((v,
+              k) =>
               <option key={k} value={v}>{v}</option>
             )}
           </select>
@@ -54,7 +81,8 @@ const Home: NextPage = () => {
           <label htmlFor="sort">Sort by (ctrl+click/drag to select multiple for linear combination): </label><br />
           <select multiple id="sort" value={sort} onChange={e => setSort(Array.from(e.target.selectedOptions).map(e => e.value))}>
             <option value="none">--none--</option>
-            {sorts.map((v, k) =>
+            {sorts.map((v,
+              k) =>
               <option key={k} value={v}>{v}</option>
             )}
           </select>
@@ -72,7 +100,8 @@ const Home: NextPage = () => {
         </form>
 
         <ul>
-          {results.map((movie: any, key) =>
+          {results.map((movie: any,
+            key) =>
             movie === null ? null :
               <li key={key}>
                 <h2 style={{ display: "inline" }}><a href={`https://imdb.com/title/${movie.imdb_id}`}>{movie.title}</a></h2>
