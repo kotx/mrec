@@ -6,17 +6,17 @@ const Home: NextPage = () => {
   const moods = [
     'funny', 'romantic', 'mind-blowing', 'feel-good', 'thrilling', 'thought-provoking', 'weird', 'uplifting', 'challenging', 'dark', 'dramatic', 'easy', 'emotional', 'heart-warming', 'inspiring', 'instructive-2', 'intense', 'no-plot', 'slow', 'smart'
   ]
-  const sorts = ['score', 'popularity', 'none']
+  const sorts = ['score', 'popularity', 'vote_average']
 
   const [mood, setMood] = useState(moods[0])
-  const [sort, setSort] = useState(sorts[0])
+  const [sort, setSort] = useState(["none"])
   const [order, setOrder] = useState('desc')
   const [submitting, setSubmitting] = useState(false)
   const [results, setResults] = useState([null])
 
   const fetchMovies = async () => {
     const config = await (await fetch(`/api/tmdb/configuration`)).json()
-    const json = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/movies?mood=${mood}&sort=${sort}&asc=${order == 'asc'}&limit=20`)).json()
+    const json = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/movies?mood=${mood}${sort.map(sort => '&sort=' + sort).join('')}&asc=${order == 'asc'}&limit=20`)).json()
 
     const res = await Promise.all(json.map(async (movie: any) => {
       try {
@@ -52,7 +52,8 @@ const Home: NextPage = () => {
 
           <br />
           <label htmlFor="sort">Sort by: </label>
-          <select id="sort" value={sort} onChange={e => setSort(e.target.value)}>
+          <select multiple id="sort" value={sort} onChange={e => setSort(Array.from(e.target.selectedOptions).map(e => e.value))}>
+            <option value="none">--none--</option>
             {sorts.map((v, k) =>
               <option key={k} value={v}>{v}</option>
             )}
@@ -77,7 +78,7 @@ const Home: NextPage = () => {
                 <p>Score: {movie.score}</p>
                 <p>Popularity: {movie.popularity}</p>
                 <p>{movie.overview}</p>
-                <img src={movie.poster_url}></img>
+                <img src={movie.poster_url} alt={`movie poster for ${movie.title}`}></img>
               </li>
           )}
         </ul>
