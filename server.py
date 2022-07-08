@@ -56,6 +56,6 @@ async def mood(
                 mins[key] = minm
                 maxs[key] = maxm
             # the formula for sorting is as follows: sum(Weight_key * (Value_key - Min_key) / Max_key for key in keys) / sum([Weight_all])
-            query = sorted(query, key=lambda m: sum([find_weight(key) * ((float(m.get(key, 0)) - mins[key]) / (maxs[key])) for key in sort]) / sum([find_weight(key) for key in sort]), reverse=not asc)
+            query = sorted(query, key=lambda m: sum([find_weight(key) * ((float(m[key] or "0.0") - mins[key]) / (maxs[key])) for key in sort]) / sum([find_weight(key) for key in sort]), reverse=not asc)
 
     return query[:min(limit, len(query)) if limit > 0 else -1]
