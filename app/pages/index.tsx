@@ -9,7 +9,7 @@ const Home: NextPage = () => {
   const sorts = ['score', 'popularity', 'vote_average']
 
   const [mood, setMood] = useState(moods[0])
-  const [sort, setSort] = useState(["none"])
+  const [sort, setSort] = useState(sorts)
   const [order, setOrder] = useState('desc')
   const [submitting, setSubmitting] = useState(false)
   const [results, setResults] = useState([null])
@@ -42,7 +42,7 @@ const Home: NextPage = () => {
         <form onSubmit={async e => { e.preventDefault(); setSubmitting(true); await fetchMovies(); setSubmitting(false); }}>
           <span>Search movies and TV shows by: </span>
 
-          <br />
+          <br /><br />
           <label htmlFor="mood">Mood: </label>
           <select id="mood" required value={mood} onChange={e => setMood(e.target.value)}>
             {moods.map((v, k) =>
@@ -50,8 +50,8 @@ const Home: NextPage = () => {
             )}
           </select>
 
-          <br />
-          <label htmlFor="sort">Sort by: </label>
+          <br /><br />
+          <label htmlFor="sort">Sort by (ctrl+click or drag to select multiple): </label><br />
           <select multiple id="sort" value={sort} onChange={e => setSort(Array.from(e.target.selectedOptions).map(e => e.value))}>
             <option value="none">--none--</option>
             {sorts.map((v, k) =>
@@ -59,15 +59,16 @@ const Home: NextPage = () => {
             )}
           </select>
 
-          <br />
+          <br /><br />
           <label htmlFor="order">Order: </label>
           <select id="order" value={order} onChange={e => setOrder(e.target.value)}>
             <option value="desc">descending</option>
             <option value="asc">ascending</option>
           </select>
 
-          <br />
+          <br /><br />
           <input type="submit" disabled={submitting} />
+          {submitting ? <p>Loading...</p> : null}
         </form>
 
         <ul>

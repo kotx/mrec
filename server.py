@@ -31,6 +31,10 @@ def find_range(movies, key):
             except: pass
     return (minimum, maximum)
 
+def find_weight(key):
+    if key == "score": return 2
+    return 1
+
 @app.get("/movies")
 async def mood(
     movies: dict = Depends(mooded_movies),
@@ -51,6 +55,7 @@ async def mood(
                 minm, maxm = find_range(movies, key)
                 mins[key] = minm
                 maxs[key] = maxm
-            query = sorted(query, key=lambda m: sum([(float(m.get(key, 0)) - mins[key]) / (maxs[key]) for key in sort]) / len(sort), reverse=not asc)
+            # the formula for sorting is as follows: sum(Weight_key * (Value_key - Min_key) / Max_key for key in keys) / sum([Weight_all])
+            query = sorted(query, key=lambda m: sum([find_weight(key) * ((float(m.get(key, 0)) - mins[key]) / (maxs[key])) for key in sort]) / sum([find_weight(key) for key in sort]), reverse=not asc)
 
     return query[:min(limit, len(query)) if limit > 0 else -1]
