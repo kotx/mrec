@@ -77,6 +77,7 @@ const Home: NextPage = () => {
                 <h2 style={{ display: "inline" }}><a href={`https://imdb.com/title/${movie.imdb_id}`}>{movie.title}</a></h2>
                 <p>Score: {movie.score}</p>
                 <p>Popularity: {movie.popularity}</p>
+                <p>Votes: {movie.vote_average}</p>
                 <p>{movie.overview}</p>
                 <img src={movie.poster_url} alt={`movie poster for ${movie.title}`}></img>
               </li>
