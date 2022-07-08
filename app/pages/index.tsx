@@ -49,7 +49,9 @@ const Home: NextPage = () => {
       try {
         const poster = await (await fetch(`/api/tmdb/poster/${movie.id}`)).json()
         movie["poster_url"] = config.images.secure_base_url + "w342/" + poster.file_path
-      } catch { }
+      } catch {
+        movie["poster_url"] = null
+      }
 
       return movie
     }))
@@ -110,7 +112,9 @@ const Home: NextPage = () => {
                 <p>Popularity: {movie.popularity}</p>
                 <p>Votes: {movie.vote_average}</p>
                 <p>{movie.overview}</p>
-                <img src={movie.poster_url} alt={`movie poster for ${movie.title}`} onError={(e) => e.currentTarget.hidden = true}></img>
+                {movie.poster_url !== null ?
+                  <img src={movie.poster_url} alt={`movie poster for ${movie.title}`} onError={(e) => e.currentTarget.hidden = true}></img>
+                  : null}
               </li>
           )}
         </ul>
