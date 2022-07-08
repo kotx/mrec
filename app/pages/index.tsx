@@ -27,7 +27,8 @@ const Home: NextPage = () => {
   ]
   const sorts = ['score',
     'popularity',
-    'vote_average']
+    'vote_average'
+  ]
 
   const [mood,
     setMood] = useState(moods[0])
@@ -109,7 +110,7 @@ const Home: NextPage = () => {
                 <p>Popularity: {movie.popularity}</p>
                 <p>Votes: {movie.vote_average}</p>
                 <p>{movie.overview}</p>
-                <img src={movie.poster_url} alt={`movie poster for ${movie.title}`}></img>
+                <img src={movie.poster_url} alt={`movie poster for ${movie.title}`} onError={(e) => e.currentTarget.hidden = true}></img>
               </li>
           )}
         </ul>
