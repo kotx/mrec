@@ -51,7 +51,7 @@ const Home: NextPage = () => {
           </select>
 
           <br /><br />
-          <label htmlFor="sort">Sort by (ctrl+click or drag to select multiple): </label><br />
+          <label htmlFor="sort">Sort by (ctrl+click/drag to select multiple for linear combination): </label><br />
           <select multiple id="sort" value={sort} onChange={e => setSort(Array.from(e.target.selectedOptions).map(e => e.value))}>
             <option value="none">--none--</option>
             {sorts.map((v, k) =>
