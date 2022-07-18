@@ -3,28 +3,7 @@ import Head from 'next/head'
 import { useState } from 'react'
 
 const Home: NextPage = () => {
-  const moods = [
-    'funny',
-    'romantic',
-    'mind-blowing',
-    'feel-good',
-    'thrilling',
-    'thought-provoking',
-    'weird',
-    'uplifting',
-    'challenging',
-    'dark',
-    'dramatic',
-    'easy',
-    'emotional',
-    'heart-warming',
-    'inspiring',
-    // 'instructive-2',
-    'intense',
-    // 'no-plot',
-    'slow',
-    'smart'
-  ]
+  const moods = ["funny", "romantic", "feel-good", "thrilling", "thought-provoking", "uplifting", "challenging", "dark", "dramatic", "easy", "emotional", "heart-warming", "inspiring", "intense"]
   const sorts = ['score',
     'popularity',
     'vote_average'
