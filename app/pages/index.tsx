@@ -21,6 +21,7 @@ const Home: NextPage = () => {
     setResults] = useState([null]);
   const [related,
     setRelated]: any = useState({});
+  const [fetchingRelated, setFetchingRelated]: any = useState({});
 
   const fetchMovies = async () => {
     const config = await (await fetch(`/api/tmdb/configuration`)).json();
@@ -34,7 +35,7 @@ const Home: NextPage = () => {
         movie["poster_url"] = null;
       }
 
-      await fetchRelated(movie.id);
+      // await fetchRelated(movie.id);
       return movie;
     }));
 
@@ -42,6 +43,7 @@ const Home: NextPage = () => {
   };
 
   const fetchRelated = async (id: string) => {
+    setFetchingRelated({ ...fetchingRelated, [id]: true });
     const config = await (await fetch(`/api/tmdb/configuration`)).json();
     const json = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/related?movie_id=${id}`)).json();
 
@@ -64,6 +66,7 @@ const Home: NextPage = () => {
       return { ...newRelated, ...related };
     });
     console.log(related);
+    setFetchingRelated({ ...fetchingRelated, [id]: false });
   };
 
   return (
@@ -126,7 +129,7 @@ const Home: NextPage = () => {
 
                 <p>Related:</p>
                 <ul style={{ listStyle: "none" }}>
-                  {related[movie.id].map((related: any) => {
+                  {movie.id in related ? related[movie.id].map((related: any) => {
                     return (
                       <li key={related.id} style={{ display: "inline-block", width: "15%", verticalAlign: "top", padding: "2%" }}>
                         <h4><a href={`https://imdb.com/title/${related.imdb_id}`}>{related.title}</a></h4>
@@ -136,7 +139,9 @@ const Home: NextPage = () => {
                           <img src={related.poster_url} alt={`movie poster for ${related.title}`} onError={(e) => e.currentTarget.hidden = true}></img>
                           : null}
                       </li>);
-                  })}
+                  }) : <button disabled={fetchingRelated[movie.id]} onClick={async () => await fetchRelated(movie.id)}>
+                    {fetchingRelated[movie.id] ? "Loading..." : "Show related movies"}
+                  </button>}
                 </ul>
               </li>
           )}
