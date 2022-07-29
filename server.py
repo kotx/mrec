@@ -17,6 +17,10 @@ def mooded_movies():
     with open("mooded_movies.json") as file:
         return json.load(file)
 
+def related_movies():
+    with open("movie_relations.json") as file:
+        return json.load(file)
+
 def find_range(movies, key):
     minimum = None
     maximum = None
@@ -59,3 +63,24 @@ async def mood(
             query = sorted(query, key=lambda m: sum([find_weight(key) * ((float(m[key] or "0.0") - mins[key]) / (maxs[key])) for key in sort]) / sum([find_weight(key) for key in sort]), reverse=not asc)
 
     return query[:min(limit, len(query)) if limit > 0 else -1]
+
+@app.get("/related")
+async def related(
+    relations: dict = Depends(related_movies),
+    movie_id: str = Query(title="The ID of the movie to find related movies for"),
+    limit: int=Query(title="The maximum number of related movies to return", default=5)
+):
+    if movie_id not in relations:
+        raise HTTPException(status_code=404, detail="Movie not found")
+    return sorted(relations[movie_id][:min(limit, 50)], key=lambda x: x["score"], reverse=True)
+
+@app.get("/movie")
+async def movie(
+    movies: dict = Depends(mooded_movies), 
+    movie_id: str = Query(title="The ID of the movie to search for")):
+    for mood in movies.keys():
+        for movie in movies[mood]:
+            if movie["id"] == movie_id:
+                return movie
+
+    raise HTTPException(status_code=404, detail="Movie not found")

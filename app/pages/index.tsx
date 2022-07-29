@@ -1,42 +1,70 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import { useState } from 'react'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import { useState } from 'react';
 
 const Home: NextPage = () => {
-  const moods = ["funny", "romantic", "feel-good", "thrilling", "thought-provoking", "uplifting", "challenging", "dark", "dramatic", "easy", "emotional", "heart-warming", "inspiring", "intense"]
+  const moods = ["funny", "romantic", "feel-good", "thrilling", "thought-provoking", "uplifting", "challenging", "dark", "dramatic", "easy", "emotional", "heart-warming", "inspiring", "intense"];
   const sorts = ['score',
     'popularity',
     'vote_average'
-  ]
+  ];
 
   const [mood,
-    setMood] = useState(moods[0])
+    setMood] = useState(moods[0]);
   const [sort,
-    setSort] = useState(sorts)
+    setSort] = useState(sorts);
   const [order,
-    setOrder] = useState('desc')
+    setOrder] = useState('desc');
   const [submitting,
-    setSubmitting] = useState(false)
+    setSubmitting] = useState(false);
   const [results,
-    setResults] = useState([null])
+    setResults] = useState([null]);
+  const [related,
+    setRelated]: any = useState({});
 
   const fetchMovies = async () => {
-    const config = await (await fetch(`/api/tmdb/configuration`)).json()
-    const json = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/movies?mood=${mood}${sort.map(sort => '&sort=' + sort).join('')}&asc=${order == 'asc'}&limit=20`)).json()
+    const config = await (await fetch(`/api/tmdb/configuration`)).json();
+    const json = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/movies?mood=${mood}${sort.map(sort => '&sort=' + sort).join('')}&asc=${order == 'asc'}&limit=10`)).json();
 
     const res = await Promise.all(json.map(async (movie: any) => {
       try {
-        const poster = await (await fetch(`/api/tmdb/poster/${movie.id}`)).json()
-        movie["poster_url"] = config.images.secure_base_url + "w342/" + poster.file_path
+        const poster = await (await fetch(`/api/tmdb/poster/${movie.id}`)).json();
+        movie["poster_url"] = config.images.secure_base_url + "w342/" + poster.file_path;
       } catch {
-        movie["poster_url"] = null
+        movie["poster_url"] = null;
       }
 
-      return movie
-    }))
+      await fetchRelated(movie.id);
+      return movie;
+    }));
 
-    setResults(res)
-  }
+    setResults(res);
+  };
+
+  const fetchRelated = async (id: string) => {
+    const config = await (await fetch(`/api/tmdb/configuration`)).json();
+    const json = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/related?movie_id=${id}`)).json();
+
+    let res: any[] = [];
+    for (let relatedMovie of json) {
+      const movie = await (await fetch(`${process.env.NEXT_PUBLIC_API_URL}/movie?movie_id=${relatedMovie.id}`)).json();
+      movie["score"] = relatedMovie.score;
+
+      try {
+        const poster = await (await fetch(`/api/tmdb/poster/${movie.id}`)).json();
+        movie["poster_url"] = config.images.secure_base_url + "w342/" + poster.file_path;
+      } catch { movie["poster_url"] = null; }
+
+      res.push(movie);
+      console.log(res);
+    }
+
+    setRelated((related: any) => {
+      let newRelated = { [id]: res };
+      return { ...newRelated, ...related };
+    });
+    console.log(related);
+  };
 
   return (
     <div>
@@ -87,6 +115,7 @@ const Home: NextPage = () => {
             movie === null ? null :
               <li key={key}>
                 <h2 style={{ display: "inline" }}><a href={`https://imdb.com/title/${movie.imdb_id}`}>{movie.title}</a></h2>
+                <p>ID: {movie.id}</p>
                 <p>Score: {movie.score}</p>
                 <p>Popularity: {movie.popularity}</p>
                 <p>Votes: {movie.vote_average}</p>
@@ -94,12 +123,27 @@ const Home: NextPage = () => {
                 {movie.poster_url !== null ?
                   <img src={movie.poster_url} alt={`movie poster for ${movie.title}`} onError={(e) => e.currentTarget.hidden = true}></img>
                   : null}
+
+                <p>Related:</p>
+                <ul style={{ listStyle: "none" }}>
+                  {related[movie.id].map((related: any) => {
+                    return (
+                      <li key={related.id} style={{ display: "inline-block", width: "15%", verticalAlign: "top", padding: "2%" }}>
+                        <h4><a href={`https://imdb.com/title/${related.imdb_id}`}>{related.title}</a></h4>
+                        <p>Score: {related.score}</p>
+                        <p>{related.overview}</p>
+                        {related.poster_url !== null ?
+                          <img src={related.poster_url} alt={`movie poster for ${related.title}`} onError={(e) => e.currentTarget.hidden = true}></img>
+                          : null}
+                      </li>);
+                  })}
+                </ul>
               </li>
           )}
         </ul>
       </main>
-    </div>
-  )
-}
+    </div >
+  );
+};
 
-export default Home
+export default Home;

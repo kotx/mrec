@@ -1,2 +1,2 @@
 mooded_movies.json filter=lfs diff=lfs merge=lfs -text
-mooded_movies.pickle filter=lfs diff=lfs merge=lfs -text
+movie_relations.json filter=lfs diff=lfs merge=lfs -text
