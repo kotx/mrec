@@ -1,2 +1,3 @@
 mooded_movies.json filter=lfs diff=lfs merge=lfs -text
 movie_relations.json filter=lfs diff=lfs merge=lfs -text
+word_to_movies.json filter=lfs diff=lfs merge=lfs -text

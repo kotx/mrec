@@ -3,6 +3,8 @@ import json
 import os
 from fastapi import FastAPI, Depends, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import itertools
+import re
 
 app = FastAPI()
 
@@ -19,6 +21,10 @@ def mooded_movies():
 
 def related_movies():
     with open("movie_relations.json") as file:
+        return json.load(file)
+
+def word_to_movies():
+    with open("word_to_movies.json") as file:
         return json.load(file)
 
 def find_range(movies, key):
@@ -84,3 +90,27 @@ async def movie(
                 return movie
 
     raise HTTPException(status_code=404, detail="Movie not found")
+
+@app.get("/search")
+async def search(
+    movies: dict = Depends(word_to_movies),
+    movie_data: dict = Depends(mooded_movies),
+    query: str = Query(title="The keywords of movies to search for")):
+    movie_data = {m["id"]: m for m in itertools.chain.from_iterable([movie_data[mood] for mood in movie_data.keys()])}
+    movie_set = None
+    movie_score = {}
+    for word in [re.sub("([/\",'\\.‘’!?\)\():])", "", q.lower()) for q in query.split()]:
+        word = word.lower()
+        if word in movies:
+            word_set = set()
+            for movie in movies[word]:
+                word_set.add(movie["id"])
+            if movie_set is None:
+                movie_set = word_set
+            else:
+                movie_set = movie_set.intersection(word_set)
+            for movie in movie_set:
+                score = [m["score"] for m in movies[word] if m["id"] == movie][0]
+                movie_score[movie] = movie_score.get(movie, 0) + score
+    sorted_movies = sorted(movie_set or [], key=lambda x: movie_score[x], reverse=True)
+    return [movie_data[id] for id in sorted_movies]

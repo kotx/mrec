@@ -1,5 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useState } from 'react';
 
 const Home: NextPage = () => {
@@ -107,6 +108,8 @@ const Home: NextPage = () => {
             <option value="asc">ascending</option>
           </select>
 
+          <br /><br />
+          <Link href="/search">Or search by keyword</Link>
           <br /><br />
           <input type="submit" disabled={submitting} />
           {submitting ? <p>Loading...</p> : null}
