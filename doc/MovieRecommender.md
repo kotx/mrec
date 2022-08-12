@@ -28,14 +28,11 @@ Datasets
 
 Movies grouped by mood, IMDB/TMDB movie posters and genre tags
 
--   Movies/Shows and Mood - 1705 items: A list of movies with general
-    > information and IMDB/TMDB ID, categorized by mood
+-   Movies/Shows and Mood - 1705 items: A list of movies with general information and IMDB/TMDB ID, categorized by mood
 
 <!-- -->
 
--   [<u>The Movies Dataset \|
-    > Kaggle</u>](https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset?select=movies_metadata.csv) -
-    > large dataset of 40,000+ movies
+-   [<u>The Movies Dataset \| Kaggle</u>](https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset?select=movies_metadata.csv) - large dataset of 40,000+ movies
 
 Design
 ======
@@ -57,11 +54,9 @@ sum(Weight<sub>key</sub> \* (Value<sub>key</sub> − Min<sub>key</sub>) / 
 
 Where:
 
--   keys: the list of attributes to sort by (e.g. confidence,
-    > popularity, votes)
+-   keys: the list of attributes to sort by (e.g. confidence, popularity, votes)
 
--   weight: the weight of each key (e.g. confidence=2, popularity=1,
-    > votes=1)
+-   weight: the weight of each key (e.g. confidence=2, popularity=1, votes=1)
 
 The movie’s title, overview, and taglines are embedded if available.
 
@@ -92,26 +87,18 @@ Milestones
 ==========
 
 1.  Data Collection - IMDB reviews, movies associated with moods.
-    > View in scraped\_data.
 
-2.  Data Processing - Established word count in reviews
-    > categorized by movies with specific moods. View in
-    > scraped\_data/moods.json. TODO: Build a mapping from
-    > mood-to-poster and posters-to-similar-posters
+2.  Data Processing - Established word count in reviews categorized by movies with specific moods. View in scraped\_data/moods.json
 
-3.  Build an algorithm to pick movies/shows similar to the user’s mood
-    > and poster selections
+3.  Build an algorithm to pick movies/shows similar to the user’s mood and poster selections
 
 4.  Create an application/frontend for the algorithm, as a demo
 
 5.  Implement a keyword search for finding movies based on keywords
-    >
 
-6.  Cross-compare movie embeddings to establish a list of related movies
-    > for each movie
+6.  Cross-compare movie embeddings to establish a list of related movies for each movie
 
-7.  Test keyword search by embedding keywords and comparing to movie
-    > embeddings
+7.  Test keyword search by embedding keywords and comparing to movie embeddings
 
 Result Analysis
 ===============
@@ -135,8 +122,8 @@ Word count search:
 <img src="media/image1.png" style="width:2.48229in;height:5.30729in" /><img src="media/image2.png" style="width:2.38993in;height:5.33854in" />
 
 Embedded keyword search:
-
-&gt; query: minion
+```
+> query: minion
 
 -----
 
@@ -166,7 +153,7 @@ local pool, the snooty rival ball team, and the travelling fair.
 
 -----
 
-&gt; query: minions
+> query: minions
 
 -----
 
@@ -192,7 +179,7 @@ When missile technology is used to enhance toy action figures, the toys
 soon begin to take their battle programming too seriously.
 
 -----
-
+```
  
 
 Future Work
